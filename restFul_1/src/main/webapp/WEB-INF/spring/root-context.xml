@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:context="http://www.springframework.org/schema/context"
+         xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+         xmlns:tx="http://www.springframework.org/schema/tx"
+         xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                        http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/context 
+                        http://www.springframework.org/schema/context/spring-context.xsd
+                        http://www.springframework.org/schema/jdbc  
+                        http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd
+                        http://www.springframework.org/schema/tx 
+                        http://www.springframework.org/schema/tx/spring-tx.xsd">
+   
+   <!-- Root Context: defines shared resources visible to all other web components -->
+   <context:property-placeholder location="classpath:/db.properties"/>   
+   
+   <bean id="ds_oracle" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">   
+      <property name="driverClassName" value="${db.oracle.driver}"></property>
+      <property name="url" value="${db.oracle.url}"></property>
+      <property name="username" value="${db.oracle.username}"></property>
+      <property name="password" value="${db.oracle.password}"></property>
+   </bean>
+   
+   
+   <bean id="sqlSession_oracle" class="org.mybatis.spring.SqlSessionFactoryBean">
+      <property name="dataSource" ref="ds_oracle"></property>   
+      <property name="configLocation" value="classpath:/mybatisconfig/oracle/mybatis-config.xml"></property>      
+      <property name="mapperLocations" value="classpath:/mybatisquery/oracle/*.xml"></property>            
+   </bean>
+   
+   
+   <bean id="txManager_oracle" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+         <property name="dataSource" ref="ds_oracle"></property>
+   </bean>
+   
+   
+   <!-- DAO 또는 Mapper 찾기  -->
+   
+	<bean id="ds_oracle_scanner" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="a.p.i.**.dao" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSession_oracle" />
+	</bean>
+   
+   
+    
+</beans>
